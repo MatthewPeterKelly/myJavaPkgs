@@ -67,6 +67,7 @@ public class Pendulum implements DynamicalSystem{
 	/** ********************************************************************
 	 * A class for plotting the pendulum
 	 */
+	@SuppressWarnings("serial")
 	public class PendulumPlotter extends DrawPanel{
 	
 		/** Create a new pendulum plotter */

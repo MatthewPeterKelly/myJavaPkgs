@@ -15,6 +15,7 @@ import javax.swing.event.ChangeListener;
  * @author Matt
  *
  */
+@SuppressWarnings("serial")
 public class IO_Double {
 
 	private double val;

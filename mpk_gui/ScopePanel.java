@@ -1,6 +1,7 @@
 package mpk_gui;
 
 /** This is a class for plotting data as it is received */
+@SuppressWarnings("serial")
 public class ScopePanel extends PlotPanel {
 
 	private RingBuffer xBuffer, yBuffer;

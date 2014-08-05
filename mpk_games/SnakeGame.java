@@ -2,7 +2,6 @@ package mpk_games;
 
 import java.awt.Color;
 import java.awt.Graphics;
-import java.awt.GridLayout;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.LinkedList;
@@ -253,9 +252,8 @@ public class SnakeGame {
 
 	/** ****************************************************
 	An inner class for displaying the current state of the game board */ 
+	@SuppressWarnings("serial")
 	public class SnakeGUI extends JPanel implements KeyListener{
-
-		private Color backgroundColor = new Color(0.8f, 0.8f, 0.8f);
 
 		public int width,height,cellSize;
 

@@ -13,7 +13,7 @@ public class Integrator {
 
 	/// Temp variables
 	private double[] z, dz;
-	private double[] z1, z2, z3, z4;
+	private double[] z2, z3, z4;
 	private double[] dz1, dz2, dz3, dz4; // For Runge-Kutta 4th order method
 	private int n;  // Dimension of the state space
 	
@@ -22,7 +22,6 @@ public class Integrator {
 		this.dynamicalSystem = dynamicalSystem;
 		n = dynamicalSystem.getState().length;
 		z = new double[n];
-		z1 = new double[n];
 		z2 = new double[n];
 		z3 = new double[n];
 		z4 = new double[n];
@@ -60,7 +59,6 @@ public class Integrator {
 
 			case RK4:   // 4th-order Runge-Kutta
 
-				z1 = z;
 				dz1 = dz;
 
 				for (int j=0; j<n; j++)   z2[j] = z[j] + 0.5*dt*dz1[j];

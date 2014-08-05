@@ -6,6 +6,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 /** This class wraps a boolean value for interfacing with the GUI */
+@SuppressWarnings("serial")
 public class IO_Boolean {
 
 	private boolean val;  // current value

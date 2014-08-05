@@ -1,4 +1,4 @@
-package mpk_DEMO;
+package examples;
 import java.awt.GridLayout;
 
 import javax.swing.JFrame;

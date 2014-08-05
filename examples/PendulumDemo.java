@@ -1,15 +1,11 @@
-package mpk_DEMO;
+package examples;
 
 import java.awt.GridLayout;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
-import mpk_dsc.DynamicalSystem;
-import mpk_dsc.Integrator;
 import mpk_dsc.Pendulum;
-import mpk_gui.IO_Boolean;
-import mpk_gui.IO_Double;
 import mpk_gui.RingBuffer;
 import mpk_gui.ScopePanel;
 import mpk_gui.Timer;

@@ -9,6 +9,7 @@ import javax.swing.JPanel;
 
 /** This abstract class makes it easier to draw in a JFrame by adding some nice
  * methods that are in 'real' coordinates (rather than pixels) */
+@SuppressWarnings("serial")
 public abstract class DrawPanel extends JPanel {
 	
 	/** The lower bound in world coordinates of the x-axis */

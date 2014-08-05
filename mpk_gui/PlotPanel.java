@@ -19,6 +19,7 @@ import javax.swing.event.MouseInputListener;
  * RIGHT-CLICK: Remove the nearest data-label
  * 
  * */
+@SuppressWarnings("serial")
 public class PlotPanel extends JPanel implements MouseInputListener{
 
 	/** The label for the horizontal (x) axis of the plot */
