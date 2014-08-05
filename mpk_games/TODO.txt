@@ -1,0 +1,53 @@
+Game Ideas:
+
+
+
+
+~~~~~~~~~~~~~
+~~ PONG  
+
+Try original and then perhaps some variations. One idea would be to randomly generate a vector field in between the players, and each player can adjust the angle of the paddle on each side. Also could use a paddel that is a fixed orientation, but has an interesting curve or something like that.
+
+
+
+
+~~~~~~~~~~~~~~~
+~~ Nibbles:
+
+
+Description: A worm or snake constantly moves around the board. The player controls the direction the “head” of the worm moves, and the worm must try to eat apples that randomly appear. Eating an apply causes the worm to grow in length. The game ends if the worm crashes into the edge of the board or into itself.
+
+Variants: Add walls to the level, instead of just a blank rectangle. Add power ups that the worm can pick up. Add bad guys that move around the board that the worm must avoid. Have two worms that the player must control simultaenously. Tron (see below) is a two-player variant of this game.
+
+
+~~~~~~~~~~~~
+~~ Dot-to-Dot
+
+grid-based two player game. Each player draws lines between grid points. If a player completes a cell, then it is colored into his/her color. If you complete a cell, then you get another move. Player with the most completed cells wins.
+
+~~~~~~~~~~~~
+~~ Tetris:
+
+Description: Shapes made up of four blocks fall from the top of the board. The player must rotate and place them to create full rows with no gaps. When a full row is made, the blocks in that row disappear and the blocks above it move down. The game ends if the board fills up.
+
+
+
+
+~~~~~~~~~~~~~
+~~ Othello
+
+
+~~~~~~~~~~~~~
+~~ Tic-Tac-Toe
+
+Normal (2d) version, recursive 2D version, and 3D version, and larger 2D version (4x4 or 5x5)
+
+
+~~~~~~~~~~~~~
+~~ Checkers / Chinese Checkers
+
+
+~~~~~~~~~~~~~
+~~ Worms / Cannons
+
+Each player has a cannon that can shoot a projectile, withthe goal of hitting the other player. 
