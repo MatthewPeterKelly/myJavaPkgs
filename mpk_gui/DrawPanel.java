@@ -112,6 +112,21 @@ public abstract class DrawPanel extends JPanel {
 	///////////////////////////////////////////////////////////////////////
 	////                     Utility functions!                        ////
 	///////////////////////////////////////////////////////////////////////
+
+	/** Set the line width */
+	public void setLineWidth(int w){
+		g2.setStroke(new BasicStroke(w));
+	}
+	
+	/** Set the color using a Color object*/
+	public void setColor(Color color){
+		g2.setColor(color);
+	}
+	
+	/** Sets the color fusing RGB */
+	public void setColor(int r, int g, int b){
+		g2.setColor(new Color(r,g,b));
+	}	
 	
 	/** Wrapper for drawString */
 	public void drawString(String string, double x, double y){
@@ -123,29 +138,29 @@ public abstract class DrawPanel extends JPanel {
 		g2.drawLine(((int) (Mx*x1 + Bx)), ((int) (My*y1 + By)),
 				((int) (Mx*x2 + Bx)), ((int) (My*y2 + By)));
 	}
-	
-	/**
-	 * Draws a capsule (a long thin rectangle, with rounded ends) 
-	 * @param x1 - x position of the center of one end 
-	 * @param y1 - y position of the center of the end
-	 * @param x2 - x position of the center of one other end 
-	 * @param y2 - y position of the center of the other end
-	 * @param w - the width / distance between the edges of the lines
-	 */
-	 void drawCapsule(double x1, double y1, double x2, double y2, double w){
 		 
-	 }
-	 
-	
-	/** Set the line width */
-	public void setLineWidth(int w){
-		g2.setStroke(new BasicStroke(w));
+	/** Wrapper for drawOval - draws a circle of radius @param r centered at 
+	 * the position @param x and @param y */
+	public void drawCircle(double x, double y, double r){
+		int xLow = (int) (Mx*(x-r)+Bx);
+		int yLow = (int) (My*(y+r)+By);
+		int xWid = (int) (Math.abs(2*Mx*r));
+		int yWid = (int) (Math.abs(2*My*r));
+		
+		g2.drawOval(xLow,yLow,xWid,yWid);
 	}
 	
-	/** Set the color */
-	public void setColor(Color color){
-		g2.setColor(color);
+	/** Wrapper for drawOval - draws a circle of radius @param r centered at 
+	 * the position @param x and @param y */
+	public void fillCircle(double x, double y, double r){
+		int xLow = (int) (Mx*(x-r)+Bx);
+		int yLow = (int) (My*(y+r)+By);
+		int xWid = (int) (Math.abs(2*Mx*r));
+		int yWid = (int) (Math.abs(2*My*r));
+		
+		g2.fillOval(xLow,yLow,xWid,yWid);
 	}
+	
 	
 	/*
 	 * Useful things:

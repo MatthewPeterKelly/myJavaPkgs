@@ -14,7 +14,7 @@ public class Pendulum implements DynamicalSystem{
 	private double m = 1.0;  // (kg) mass
 	private double g = 9.81; // (m/s^2) gravity
 	private double l = 1.0;  // (m) length
-	private double c = 0.0;  // (N*m*s) damping
+	private double c = 0.15;  // (N*m*s) damping
 
 	private Integrator integrator;
 
@@ -86,11 +86,12 @@ public class Pendulum implements DynamicalSystem{
 			double y = -l*Math.cos(z[0]);
 			setLineWidth(6);
 			drawLine(0,0,x,y);
+			fillCircle(0,0,0.1*l);
+			setColor(0,0,255);			
+			fillCircle(x,y,0.2*l);
+			setColor(0,0,0);			
+			drawCircle(x,y,0.2*l);
 			setLineWidth(3);
-			drawLine(-l,-l,-l,l);
-			drawLine(-l,l,l,l);
-			drawLine(l,l,l,-l);
-			drawLine(l,-l,-l,-l);
 		}
 
 		

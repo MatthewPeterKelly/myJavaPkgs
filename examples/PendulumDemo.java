@@ -14,7 +14,7 @@ import mpk_gui.Timer;
 /** A demonstration for a single damped pendulum with control */
 public class PendulumDemo {
 
-	public static double frames_per_second = 45;
+	public static double frames_per_second = 30;
 
 	public static void main (String args[]){
 
