@@ -9,12 +9,11 @@ public class DoublePendulum implements DynamicalSystem{
 	public double[] z = new double[] {0.2, 0.42, 0.0, 0.0};   
 	public double[] dz = new double[4];  // The derivative of the state
 
-	/* m*l*l*ddTh + c*dTh + m*g*l*Math.sin(th) = tau
-	 * ddTh = tau/(m*l*l) - (c*dTh)/(m*l*l) - (g/l)*Math.sin(th) */
-	private double m1 = 1.0;  // (kg) mass
-	private double m2 = 1.0;  // (kg) mass
+	/* parameters for the double pendulum */
+	private double m1 = 1.0;  // (kg) mass of bob 1 (end of first massless link)
+	private double m2 = 1.0;  // (kg) mass of bob 2 (end of second massless link)
 	private double g = 9.81; // (m/s^2) gravity
-	private double l = 1.0;  // (m) length
+	private double l = 1.0;  // (m) length of one link (both are the same)
 
 	private Integrator integrator;
 
@@ -26,7 +25,7 @@ public class DoublePendulum implements DynamicalSystem{
 
 		integrator = new Integrator(this);
 		integrator.method = Integrator.Method.RK4;
-		integrator.number_of_substeps = 10;
+		integrator.number_of_substeps = 10;  // Between animation frames
 
 		plot = new PendulumPlotter();
 	}
