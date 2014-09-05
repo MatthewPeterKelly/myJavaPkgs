@@ -114,7 +114,8 @@ public class IO_Double {
 
 			jSlider = new JSlider(JSlider.HORIZONTAL,0,nBins,0);  // Create the JSlider
 			jSlider.addChangeListener(this);
-
+			jSlider.setFocusable(false);
+			
 			/// Add labels to the slider
 			int center = nBins/2;
 			table = new Hashtable<Integer, JLabel>();

@@ -25,7 +25,7 @@ public class DoublePendulum implements DynamicalSystem{
 
 		integrator = new Integrator(this);
 		integrator.method = Integrator.Method.RK4;
-		integrator.number_of_substeps = 10;  // Between animation frames
+		integrator.number_of_substeps = 50;  // Between animation frames
 
 		plot = new PendulumPlotter();
 	}

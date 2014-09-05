@@ -55,6 +55,7 @@ public class IO_Boolean {
 		public MyCheckBox(String name, boolean init){
 			button = new JCheckBox(name);
 			button.addChangeListener(this);
+			button.setFocusable(false);
 			button.setSelected(init);
 			add(button);
 		}
