@@ -1,11 +1,10 @@
 package mpk_gui;
 
-
 /** A method that is used for continuously logging data.  */
 public class RingBuffer {
 
 	private double[] data;    
-	private double[] output;
+	private double[] output;	
 
 	private int n;  // length of the buffer
 	private boolean init = false;
@@ -62,5 +61,16 @@ public class RingBuffer {
 	 */
 	public void reset(){
 		init = false;  // Flag to overwrite all data on next run
+	}
+	
+	/** 
+	 * Compute the mean value of the buffer 
+	 */
+	public double mean(){
+		double sum = 0;
+		for (int i=0; i<n; i++){
+			sum += data[i];
+		}
+		return sum/n;
 	}
 }

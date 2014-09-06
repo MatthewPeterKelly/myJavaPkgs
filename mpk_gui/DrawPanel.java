@@ -47,6 +47,16 @@ public abstract class DrawPanel extends JPanel {
 		this.yUpp = yUpp;
 	}	
 	
+	/** Move the center of the plot to a new location */
+	public void panTo(double x, double y){
+		double dx = 0.5*(xUpp-xLow);
+		double dy = 0.5*(yUpp-yLow);
+		xLow = x - dx;
+		xUpp = x + dx;
+		yLow = y + dy;
+		yUpp = y - dy;
+	}
+	
 	/** This must be implemented by the user! Call drawing functions in this 
 	 * class, which wraps the functions found in a Graphics object	 */
 	public abstract void paint();
@@ -160,16 +170,5 @@ public abstract class DrawPanel extends JPanel {
 		
 		g2.fillOval(xLow,yLow,xWid,yWid);
 	}
-	
-	
-	/*
-	 * Useful things:
-	 * 
-	 *  Shape Interface:  list of implementing classes:  
-	 *      http://docs.oracle.com/javase/7/docs/api/java/awt/Shape.html
-	 *      --> Polygon:  http://docs.oracle.com/javase/7/docs/api/java/awt/Polygon.html
-	 *  Graphics2d.fill(Shape s);  
-	 *      http://docs.oracle.com/javase/7/docs/api/java/awt/Graphics2D.html
-	 */
-	
+		
 }

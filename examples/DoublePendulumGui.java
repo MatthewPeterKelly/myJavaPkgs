@@ -1,14 +1,15 @@
 package examples;
 
 import java.awt.Color;
-import java.awt.Graphics;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
+import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.SpringLayout;
 import javax.swing.Timer;
 
 import mpk_dsc.DoublePendulum;
@@ -37,7 +38,6 @@ public class DoublePendulumGui extends JPanel implements KeyListener{
 	private boolean pause = false;
 
 	public DoublePendulumGui() {
-		setBackground(Color.GREEN);
 		setFocusable(true);
 		addKeyListener(this);
 
@@ -83,11 +83,18 @@ public class DoublePendulumGui extends JPanel implements KeyListener{
 		scopePanel.add(scopeAngle);
 		scopePanel.add(scopeRate);
 
+		/// Assemble sub-sub panel:
+		JPanel infoPanel = new JPanel();
+		infoPanel.setLayout(new GridLayout(3,1));
+		infoPanel.add(rate.slider);
+		infoPanel.add(new JLabel("R = reset playback speed"));
+		infoPanel.add(new JLabel("Space = toggle simulation"));
+		
 		/// Assemble sub JPanel right
 		JPanel graphicsPanel = new JPanel();
 		graphicsPanel.setLayout(new GridLayout(2,1));
 		graphicsPanel.add(doublependulum.plot);
-		graphicsPanel.add(rate.slider);
+		graphicsPanel.add(infoPanel);
 
 		/// Assemble main JPanel
 		setLayout(new GridLayout(1,2));
