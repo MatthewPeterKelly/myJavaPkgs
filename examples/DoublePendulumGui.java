@@ -87,7 +87,6 @@ public class DoublePendulumGui extends JPanel implements KeyListener{
 		JPanel infoPanel = new JPanel();
 		infoPanel.setLayout(new GridLayout(3,1));
 		infoPanel.add(rate.slider);
-		infoPanel.add(new JLabel("R = reset playback speed"));
 		infoPanel.add(new JLabel("Space = toggle simulation"));
 		
 		/// Assemble sub JPanel right

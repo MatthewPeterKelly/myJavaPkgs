@@ -1,12 +1,17 @@
 package mpk_gui;
 
+import java.awt.Color;
 import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.Hashtable;
 
 import javax.swing.BorderFactory;
+import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
+import javax.swing.border.Border;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -28,6 +33,9 @@ public class IO_Double {
 
 	/** A slider that is connected to this double */
 	public MySliderDouble slider;
+	
+	/** A button to reset the slider */
+	private MyButton button;
 
 	/**
 	 * 
@@ -125,12 +133,22 @@ public class IO_Double {
 			table.put( nBins, new JLabel(String.format(format,upp)));
 			jSlider.setLabelTable(table);
 			jSlider.setPaintLabels(true);
-
-			setBorder(BorderFactory.createEmptyBorder(10,10,10,10)); //top, left, bottom, and right
-
+			
+			/// Create the title and reset button
+			button = new MyButton();
+			JPanel titleBar = new JPanel();
+			titleBar.setLayout(new GridLayout(1,2));
+			titleBar.add(new JLabel(name,JLabel.CENTER));
+			titleBar.add(button);
+			
 			/// Add the slider to the JPanel
-			add(new JLabel(name,JLabel.CENTER));
+			add(titleBar);
 			add(jSlider);
+			
+			/// Create a border
+			Border outline = BorderFactory.createLineBorder(Color.BLACK);
+			Border margins = BorderFactory.createEmptyBorder(10,10,10,10);
+			setBorder(BorderFactory.createCompoundBorder(outline,margins));
 
 		}
 
@@ -151,6 +169,28 @@ public class IO_Double {
 			label.setText(String.format(format,val));
 			val = (1-alpha)*low + alpha*upp;
 		}
+	}
+	
+	/** ********************************************************************************* 
+	 * A class that wraps a JButton that is used to reset the slider */
+	private class MyButton extends JPanel implements ActionListener{
+
+		/** The check box that this toggle switch is wrapping */
+		public JButton button;
+
+		/** Create a new toggle switch, tied to a parameter */
+		public MyButton(){
+			button = new JButton("reset");
+			button.addActionListener(this);
+			button.setFocusable(false);
+			add(button);
+		}
+
+		@Override
+		public void actionPerformed(ActionEvent arg0) {
+			reset(); // Reset the slider
+		}
+		
 	}
 
 }
