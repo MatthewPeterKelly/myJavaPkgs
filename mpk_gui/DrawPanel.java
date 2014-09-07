@@ -170,5 +170,16 @@ public abstract class DrawPanel extends JPanel {
 		
 		g2.fillOval(xLow,yLow,xWid,yWid);
 	}
+	
+	/** Wrapper for drawOval - draws a circle of radius @param r centered at 
+	 * the position @param x and @param y */
+	public void fillRect(double xLow, double yLow, double xWidth, double yWidth){
+		int xL = (int) (Mx*xLow+Bx);
+		int yL = (int) (My*yLow+By);
+		int xW = (int) (Math.abs(Mx*xWidth));
+		int yW = (int) (Math.abs(My*yWidth));
+		
+		g2.fillRect(xL,yL,xW,yW);
+	}
 		
 }

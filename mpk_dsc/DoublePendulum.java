@@ -135,7 +135,7 @@ public class DoublePendulum implements DynamicalSystem{
 			double x2 = x1 + l*Math.cos(z[1]);
 			double y2 = y1 + l*Math.sin(z[1]);
 			setLineWidth(6);
-			fillCircle(0,0,0.05*l);	
+			fillRect(-0.1*l, 0.1*l, 0.2*l, 0.2*l);	
 			drawLine(0,0,x1,y1);
 			fillCircle(x1,y1,0.15*l);
 			drawLine(x1,y1,x2,y2);
