@@ -65,4 +65,9 @@ public class ButterworthFilter {
 		}
 		return y0;
 	}
+	
+	/** Read the output of the filter */
+	public double read(){
+		return y0;
+	}
 }
