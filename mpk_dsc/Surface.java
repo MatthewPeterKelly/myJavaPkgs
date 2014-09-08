@@ -2,6 +2,9 @@ package mpk_dsc;
 
 import mpk_gui.DrawPanel;
 
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
@@ -11,7 +14,7 @@ import java.util.Scanner;
  * @author matt
  *
  */
-public class BilinearInterpolate {
+public class Surface {
 
 	private Double xLow; // The minimum value along the x axis
 	private Double xUpp; // The maximum value along the x axis
@@ -25,10 +28,11 @@ public class BilinearInterpolate {
 
 	private Double[][] z; // z[i][j] = z(x[i],y[j])
 	private Double[] x, y;
-	private double[] zBnd = {Double.MAX_VALUE, Double.MIN_VALUE};
+	private Double zLow;
+	private Double zUpp;
 
 	public SurfacePlotter plot;
-	
+
 	private final double EPSILON = 1e-10; // Numbers closer than this are considered identical
 
 	/** Constructs a Surface object from a data file. 
@@ -56,7 +60,7 @@ public class BilinearInterpolate {
 	 * 
 	 * @throws FileNotFoundException 
 	 */
-	public BilinearInterpolate(File file) throws FileNotFoundException {
+	public Surface(File file) throws FileNotFoundException {
 
 		if ( file.exists() )                          // check that the file exists
 		{                                          
@@ -112,20 +116,23 @@ public class BilinearInterpolate {
 			// close the Scanner object attached to the file
 			inFile.close();
 		} 
-				
-		plot = new SurfacePlotter(xLow,xUpp,yLow,yUpp);
-		
+
 		/// Compute the bounds on z:
 		double val;
+		zLow = Double.MAX_VALUE;
+		zUpp = Double.MIN_VALUE;
 		for (int i=0; i<nx; i++){  /// Compute the x and y values
 			for (int j=0; j<ny; j++){
 				val = z[i][j];
-				if (val < zBnd[0]) zBnd[0] = val;
-				else if (val > zBnd[1]) zBnd[1] = val;
+				if (val < zLow) zLow = val;
+				else if (val > zUpp) zUpp = val;
 			}
 		}
-		
-}
+
+		/// Create a new surface plotter
+		plot = new SurfacePlotter(xLow,xUpp,yLow,yUpp);
+
+	}
 
 	/**
 	 * Interpolate from 2D data. Any inputs that are out of the valid 
@@ -226,35 +233,64 @@ public class BilinearInterpolate {
 		} System.out.print("\n");
 
 	}
-	
+
 	@SuppressWarnings("serial")
 	public class SurfacePlotter extends DrawPanel {
 
-		double dx,dy;
+		/// Everything is stored here
+		public BufferedImage image;
+
+		/// The hue for the color map
+		public float hue = (float) (2.0/3.0);  // Blue
 		
 		public SurfacePlotter(double xLow, double xUpp, double yLow, double yUpp){
 			super();
-			dx = (xUpp-xLow)/mx;
-			dy = (yUpp-yLow)/my;
-			this.xLow = xLow - 0.5*dx;
-			this.xUpp = xUpp + 0.5*dx;
-			this.yLow = yLow - 0.5*dy;
-			this.yUpp = yUpp + 0.5*dy;
+			this.xLow = xLow;
+			this.xUpp = xUpp;
+			this.yLow = yLow;
+			this.yUpp = yUpp;
 		}
-		
+
 		@Override
 		public void paint() {
-			double val;  // On range [0,1]
-			for (int j=0; j<ny; j++){
-				for (int i=0; i<nx; i++){
-					val = (z[i][j] - zBnd[0])/(zBnd[1] - zBnd[0]);			
-					setColor(0,0,(int)(255*val)); //TODO put a nice color map in
-					fillRect(x[i]-0.5*dx, y[j]-0.5*dy, dx, dy);
-				} 
+
+			int w = getWidth();
+			int h = getHeight();
+
+			/// Create a new BufferedImage
+			image = new BufferedImage(w,h,BufferedImage.TYPE_INT_RGB);
+			float value;
+			double xTmp, yTmp, zTmp;
+
+			for (int i=0; i<w; i++){  /// Compute the x and y values
+				for (int j=0; j<h; j++){
+					xTmp = xLow + (xUpp-xLow)*(i/(w-1.0));
+					yTmp = yLow + (yUpp-yLow)*(1.0 - j/(h-1.0)); // Flip Image
+					zTmp = interp(xTmp,yTmp);
+					value = (float) ((zTmp - zLow)/(zUpp - zLow));	
+					image.setRGB(i, j, colorMap(value));		
+				}
 			}
-			
+
+			g2.drawImage(image, 0,0, null);
+
 		}
+
+		/** Computes the color map to be used for plotting 
+		 * @param x = value between 0.0 and 1.0
+		 * @return rgb color for image.setRGB */
+		private int colorMap(double x){
+
+			x = 2.0*x;
+			if (x<0.0) x = 0.0;
+			if (x>2.0) x = 2.0;
+
+			double sat = 2.0f-x; if (sat>1.0f) sat = 1.0f;
+			double val = x; if (val>1.0f) val = 1.0f;
+			return Color.HSBtoRGB(hue,(float) sat, (float) val); // Black -- Blue -- White
 		
+		}
+
 	}
 
 }
