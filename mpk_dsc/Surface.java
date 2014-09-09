@@ -115,22 +115,25 @@ public class Surface {
 
 			// close the Scanner object attached to the file
 			inFile.close();
-		} 
 
-		/// Compute the bounds on z:
-		double val;
-		zLow = Double.MAX_VALUE;
-		zUpp = Double.MIN_VALUE;
-		for (int i=0; i<nx; i++){  /// Compute the x and y values
-			for (int j=0; j<ny; j++){
-				val = z[i][j];
-				if (val < zLow) zLow = val;
-				else if (val > zUpp) zUpp = val;
+			/// Compute the bounds on z:
+			double val;
+			zLow = Double.MAX_VALUE;
+			zUpp = Double.MIN_VALUE;
+			for (int i=0; i<nx; i++){  /// Compute the x and y values
+				for (int j=0; j<ny; j++){
+					val = z[i][j];
+					if (val < zLow) zLow = val;
+					else if (val > zUpp) zUpp = val;
+				}
 			}
-		}
 
-		/// Create a new surface plotter
-		plot = new SurfacePlotter(xLow,xUpp,yLow,yUpp);
+			/// Create a new surface plotter
+			plot = new SurfacePlotter(xLow,xUpp,yLow,yUpp);
+
+		} else {
+			throw new FileNotFoundException();
+		}
 
 	}
 
