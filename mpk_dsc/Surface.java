@@ -242,7 +242,12 @@ public class Surface {
 
 		/// The hue for the color map
 		public float hue = (float) (2.0/3.0);  // Blue
-		
+
+		public float contourHue = (float) (1.0/3.0); // Green
+		public double contourWidth = 0.015;  // Range: (0,1)
+		public int nContours = 10; // Number of contour lines to display
+		public boolean drawContourLines = true;
+
 		public SurfacePlotter(double xLow, double xUpp, double yLow, double yUpp){
 			super();
 			this.xLow = xLow;
@@ -281,14 +286,42 @@ public class Surface {
 		 * @return rgb color for image.setRGB */
 		private int colorMap(double x){
 
-			x = 2.0*x;
-			if (x<0.0) x = 0.0;
-			if (x>2.0) x = 2.0;
+			int rgb;
 
-			double sat = 2.0f-x; if (sat>1.0f) sat = 1.0f;
-			double val = x; if (val>1.0f) val = 1.0f;
-			return Color.HSBtoRGB(hue,(float) sat, (float) val); // Black -- Blue -- White
-		
+			boolean drawContourColorMap = false;
+			if (drawContourLines) {
+				double h = x*(nContours);
+				double h1 = h - Math.floor(h); 
+				double h2 = Math.ceil(h) - h;
+				if (h1 < contourWidth || h2 < contourWidth){
+					drawContourColorMap = true;
+				}
+			}
+
+			double val, sat;
+
+			if (drawContourColorMap){
+
+				x = 2.0*x;
+				if (x<0.0) x = 0.0;
+				if (x>2.0) x = 2.0;
+
+				val = 2.0f-x; if (val>1.0f) val = 1.0f;
+				sat = x; if (sat>1.0f) sat = 1.0f;
+				rgb = Color.HSBtoRGB(contourHue,(float) sat, (float) val); // Black -- Blue -- White
+
+			} else {
+
+				x = 2.0*x;
+				if (x<0.0) x = 0.0;
+				if (x>2.0) x = 2.0;
+
+				sat = 2.0f-x; if (sat>1.0f) sat = 1.0f;
+				val = x; if (val>1.0f) val = 1.0f;
+				rgb = Color.HSBtoRGB(hue,(float) sat, (float) val); // Black -- Blue -- White
+
+			}
+			return rgb;
 		}
 
 	}
