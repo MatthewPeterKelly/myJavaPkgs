@@ -3,13 +3,15 @@ package mpk_fractal;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.event.MouseEvent;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.event.MouseInputListener;
 
-public class Mandelbrot extends JPanel implements MouseInputListener{
+public class Mandelbrot extends JPanel implements MouseInputListener, KeyListener{
 
 	/** Auto-generated voo-doo magic by Eclipse */
 	private static final long serialVersionUID = -7536655286231130283L;
@@ -19,7 +21,10 @@ public class Mandelbrot extends JPanel implements MouseInputListener{
 
 	/** How much to change scale on each click */
 	private double scaleRate = 0.4; // 0 = no change, 1 = double or halve
-	
+
+	/** How many pixels to move with each key press */
+	private int panRate = 25;
+
 	/** Maximum number of iterations */
 	private int maxIter = 250;
 
@@ -32,8 +37,9 @@ public class Mandelbrot extends JPanel implements MouseInputListener{
 	public Mandelbrot() {
 		super();
 		addMouseListener(this);
+		addKeyListener(this);
 	};
-	
+
 	/** Draws a new fractal every time that the JFrame paints */
 	public void paintComponent(Graphics g){
 		super.paintComponent(g);
@@ -104,7 +110,7 @@ public class Mandelbrot extends JPanel implements MouseInputListener{
 		frame.setSize((int)(4.5*mandelbrot.scale),(int)(4.5*mandelbrot.scale));
 		frame.setVisible(true);        
 	}
-	
+
 	///////////////////////////////////////////////////////////////////////////
 	////                  Mouse interaction stuff                          ////
 	///////////////////////////////////////////////////////////////////////////
@@ -137,6 +143,32 @@ public class Mandelbrot extends JPanel implements MouseInputListener{
 	public void mouseDragged(MouseEvent e) {}
 	@Override
 	public void mouseMoved(MouseEvent e) {}
+
+	///////////////////////////////////////////////////////////////////////////
+	////                  Keyboard Interaction stuff                       ////
+	///////////////////////////////////////////////////////////////////////////
+
+	@Override
+	public void keyPressed(KeyEvent e) {		
+		switch(e.getKeyCode()) {
+		case KeyEvent.VK_LEFT:
+			center[0] -= ((double)(panRate))/scale;
+			break;
+		case KeyEvent.VK_RIGHT:
+			center[0] += ((double)(panRate))/scale;
+			break;	
+		case KeyEvent.VK_UP:
+			center[1] -= ((double)(panRate))/scale;
+			break;
+		case KeyEvent.VK_DOWN:
+			center[1] += ((double)(panRate))/scale;
+			break;
+		default:
+		}}
+	@Override
+	public void keyReleased(KeyEvent e) {}
+	@Override
+	public void keyTyped(KeyEvent e) {}
 
 
 }
