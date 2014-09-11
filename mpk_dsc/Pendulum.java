@@ -16,6 +16,8 @@ public class Pendulum implements DynamicalSystem{
 	private double l = 1.0;  // (m) length
 	private double c = 0.15;  // (N*m*s) damping
 
+	private double maxTimeStep = 0.01;
+	
 	private Integrator integrator;
 
 	public PendulumPlotter plot;
@@ -61,7 +63,15 @@ public class Pendulum implements DynamicalSystem{
 
 	@Override
 	public void timeStep(double dt) {
-		integrator.timeStep(dt);		
+		integrator.number_of_substeps = 1;  
+		integrator.timeStep(dt);
+	}
+	
+	@Override
+	public void simulate(double duration){
+		int nSteps = (int)(Math.ceil(duration/maxTimeStep));
+		integrator.number_of_substeps = nSteps;
+		integrator.timeStep(duration/nSteps);
 	}
 	
 	/** ********************************************************************

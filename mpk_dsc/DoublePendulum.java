@@ -6,7 +6,7 @@ import mpk_gui.DrawPanel;
 public class DoublePendulum implements DynamicalSystem{
 
 	// The state of the pendulum {th,phi,dth,dphi}
-	public double[] z = new double[] {0.2, 0.7, 0.0, 0.0};   
+	public double[] z = new double[] {1.8, 1.7, 0.0,0.0};   
 	public double[] dz = new double[4];  // The derivative of the state
 	public double time = 0.0;
 	public boolean displayTime = true; //Prints the simulation time on plot
@@ -17,6 +17,9 @@ public class DoublePendulum implements DynamicalSystem{
 	private double g = 9.81; // (m/s^2) gravity
 	private double l = 1.0;  // (m) length of one link (both are the same)
 
+	private double maxTimeStep = 0.01;
+	private double energyDatum = -m1*g*l + -m2*g*(2*l);
+	
 	private Integrator integrator;
 
 	public PendulumPlotter plot;
@@ -27,7 +30,6 @@ public class DoublePendulum implements DynamicalSystem{
 
 		integrator = new Integrator(this);
 		integrator.method = Integrator.Method.RK4;
-		integrator.number_of_substeps = 20;  // Between animation frames
 
 		plot = new PendulumPlotter();
 	}
@@ -42,6 +44,25 @@ public class DoublePendulum implements DynamicalSystem{
 	@Override
 	public void setState(double[] z){
 		this.z = z;
+	}
+	
+	/** Get the system energy
+	 * @return {total, kinetic, potential} */
+	public double[] getEnergy(){
+//		double x1 = l*Math.cos(z[0]);
+		double y1 = l*Math.sin(z[0]);
+//		double x2 = x1 + l*Math.cos(z[1]);
+		double y2 = y1 + l*Math.sin(z[1]);
+		double dx1 = -l*Math.sin(z[0])*dz[0];
+		double dy1 = l*Math.cos(z[0])*dz[0];
+		double dx2 = dx1 - l*Math.sin(z[1])*dz[1];
+		double dy2 = dy1 + l*Math.cos(z[1])*dz[1];
+		
+		double kinetic = 0.5*(m1*(dx1*dx1+dy1*dy1) + m2*(dx2*dx2+dy2*dy2));
+		double potential = g*(m1*y1 + m2*y2) - energyDatum;
+		double total = kinetic + potential;
+		
+		return new double[] {total, kinetic, potential};		
 	}
 
 	/** Computes the dynamics for a double pendulum. These equations were
@@ -111,8 +132,17 @@ public class DoublePendulum implements DynamicalSystem{
 
 	@Override
 	public void timeStep(double dt) {
+		integrator.number_of_substeps = 1;  
 		integrator.timeStep(dt);
 		time += dt;
+	}
+	
+	@Override
+	public void simulate(double duration){
+		int nSteps = (int)(Math.ceil(duration/maxTimeStep));
+		integrator.number_of_substeps = nSteps;
+		integrator.timeStep(duration/nSteps);
+		time += duration;
 	}
 
 	/** ********************************************************************
@@ -148,8 +178,9 @@ public class DoublePendulum implements DynamicalSystem{
 				drawString(String.format("Time: %6.4f (s)",time),xLow+0.1*l,yUpp-0.3*l);
 			}
 		}
-
-
+		
 	}
+	
+	
 
 }

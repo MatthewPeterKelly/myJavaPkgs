@@ -30,10 +30,12 @@ public class DoublePendulumGui extends JPanel implements KeyListener, AnimatedSy
 	private int nBuffer = (int) (buffer_duration*frames_per_second);   /// Keep 10 seconds worth of data
 	private RingBuffer th;
 	private RingBuffer phi;
+	private RingBuffer energy;
 	private RingBuffer t;
 	private ScopePanel scopeAngle;
 	private ScopePanel scopeRate;
-
+	private ScopePanel scopeEnergy;
+	
 	public DoublePendulumGui() {
 		setFocusable(true);
 		addKeyListener(this);
@@ -41,9 +43,10 @@ public class DoublePendulumGui extends JPanel implements KeyListener, AnimatedSy
 		// Create the pendulum
 		doublependulum = new DoublePendulum();
 
+		t = new RingBuffer(nBuffer);
 		th = new RingBuffer(nBuffer);
 		phi = new RingBuffer(nBuffer);
-		t = new RingBuffer(nBuffer);
+		energy = new RingBuffer(nBuffer);
 
 		th.put(doublependulum.z[0]);
 		phi.put(doublependulum.z[1]);
@@ -68,16 +71,27 @@ public class DoublePendulumGui extends JPanel implements KeyListener, AnimatedSy
 		scopeRate.title = "";
 		scopeRate.lineWidth = 2;
 		scopeRate.setSize(300, 450);
+		
+		scopeEnergy = new ScopePanel(t,energy);
+		scopeEnergy.xDataIsMonotonic = true;
+		scopeEnergy.autoPanY = false;
+		scopeEnergy.setAxisExtentsY(0,1.1*doublependulum.getEnergy()[0]);
+		scopeEnergy.xLabel = "Time (s)";
+		scopeEnergy.yLabel = "Energy (J)";
+		scopeEnergy.title = "";
+		scopeEnergy.lineWidth = 2;
+		scopeEnergy.setSize(300, 450);
 
 		/// Assemble sub JPanel on left
 		JPanel scopePanel = new JPanel();
-		scopePanel.setLayout(new GridLayout(2,1));
+		scopePanel.setLayout(new GridLayout(3,1));
 		scopePanel.add(scopeAngle);
 		scopePanel.add(scopeRate);
+		scopePanel.add(scopeEnergy);
 
 		/// Assemble sub-sub panel:
 		JPanel infoPanel = new JPanel();
-		infoPanel.setLayout(new GridLayout(3,1));
+		infoPanel.setLayout(new GridLayout(2,1));
 		infoPanel.add(timeRate.slider);
 		infoPanel.add(new JLabel("Space = toggle simulation"));
 
@@ -111,17 +125,19 @@ public class DoublePendulumGui extends JPanel implements KeyListener, AnimatedSy
 	}
 
 	@Override
-	public void timeStep(double dt) {
-		doublependulum.timeStep(dt);		
+	public void simulate(double dt) {
+		doublependulum.simulate(dt);		
 	}
 
 	@Override
 	public void updateGraphics() {
 		th.put(doublependulum.z[0]);
 		phi.put(doublependulum.z[1]);
+		energy.put(doublependulum.getEnergy()[0]);
 		t.put(doublependulum.time);
 		scopeAngle.update();
 		scopeRate.update();
+		scopeEnergy.update();
 		doublependulum.plot.repaint();		
 	}
 

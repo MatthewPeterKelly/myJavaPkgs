@@ -5,9 +5,9 @@ public interface AnimatedSystem {
 	/** Runs the physics for the system. 
 	 * This funtion can be called several times between each 
 	 * call to the graphics. 
-	 * @param dt - the time step for the physics integrator
+	 * @param duration of the simulation to do
 	 */
-	public void timeStep(double dt);
+	public void simulate(double duration);
 	
 	/** This function should update any graphics. It should not
 	 * modify the state in any way	 */

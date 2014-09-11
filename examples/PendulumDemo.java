@@ -81,7 +81,7 @@ public class PendulumDemo {
 		t.put(time);
 		Timer timer = new Timer(0.1,time);
 		while (true){
-			pendulum.timeStep(dt);
+			pendulum.simulate(dt);
 			time += dt;
 
 			th.put(pendulum.z[0]);
