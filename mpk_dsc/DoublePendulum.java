@@ -6,9 +6,11 @@ import mpk_gui.DrawPanel;
 public class DoublePendulum implements DynamicalSystem{
 
 	// The state of the pendulum {th,phi,dth,dphi}
-	public double[] z = new double[] {0.2, 0.42, 0.0, 0.0};   
+	public double[] z = new double[] {0.2, 0.7, 0.0, 0.0};   
 	public double[] dz = new double[4];  // The derivative of the state
-
+	public double time = 0.0;
+	public boolean displayTime = true; //Prints the simulation time on plot
+	
 	/* parameters for the double pendulum */
 	private double m1 = 1.0;  // (kg) mass of bob 1 (end of first massless link)
 	private double m2 = 1.0;  // (kg) mass of bob 2 (end of second massless link)
@@ -25,7 +27,7 @@ public class DoublePendulum implements DynamicalSystem{
 
 		integrator = new Integrator(this);
 		integrator.method = Integrator.Method.RK4;
-		integrator.number_of_substeps = 50;  // Between animation frames
+		integrator.number_of_substeps = 20;  // Between animation frames
 
 		plot = new PendulumPlotter();
 	}
@@ -109,7 +111,8 @@ public class DoublePendulum implements DynamicalSystem{
 
 	@Override
 	public void timeStep(double dt) {
-		integrator.timeStep(dt);		
+		integrator.timeStep(dt);
+		time += dt;
 	}
 
 	/** ********************************************************************
@@ -141,6 +144,9 @@ public class DoublePendulum implements DynamicalSystem{
 			drawLine(x1,y1,x2,y2);
 			fillCircle(x2,y2,0.15*l);	
 			setLineWidth(3);
+			if (displayTime){
+				drawString(String.format("Time: %6.4f (s)",time),xLow+0.1*l,yUpp-0.3*l);
+			}
 		}
 
 

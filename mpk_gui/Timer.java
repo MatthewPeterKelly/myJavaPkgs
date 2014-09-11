@@ -77,6 +77,11 @@ public class Timer {
 			if (VERBOSE) System.out.println("WARNING - Graphics Timing Error");
 		}
 
+		/// Check for timing errors
+		if (Math.abs(error) > maxWait){
+			reset(targetTimeDouble);
+		}
+		
 		/// Sleeping here:
 		if (waitDuration > 0){ // Then tell the cpu to wait for a bit
 			try { 
@@ -85,8 +90,10 @@ public class Timer {
 			catch (InterruptedException e) {e.printStackTrace();}
 		}
 
-
-
+	}
+	
+	public double getError(){
+		return error;
 	}
 
 }

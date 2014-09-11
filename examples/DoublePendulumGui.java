@@ -1,50 +1,42 @@
 package examples;
 
-import java.awt.Color;
 import java.awt.GridLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.SpringLayout;
-import javax.swing.Timer;
 
+import mpk_gui.Timer;
+import mpk_dsc.AnimatedSystem;
 import mpk_dsc.DoublePendulum;
 import mpk_gui.IO_Double;
 import mpk_gui.RingBuffer;
 import mpk_gui.ScopePanel;
 
 @SuppressWarnings("serial")
-public class DoublePendulumGui extends JPanel implements KeyListener{
+public class DoublePendulumGui extends JPanel implements KeyListener, AnimatedSystem{
 
-	public double frames_per_second = 30.0;
+	public final double dt = 0.005;
+	public final double frames_per_second = 60.0;
+
 	private final double buffer_duration = 7.5;  // Seconds
 
+	private boolean isPaused = false;
+	
 	private DoublePendulum doublependulum;
 	private double time;
-	private IO_Double rate;
+	private IO_Double timeRate;
 	private int nBuffer = (int) (buffer_duration*frames_per_second);   /// Keep 10 seconds worth of data
 	private RingBuffer th;
 	private RingBuffer phi;
 	private RingBuffer t;
 	private ScopePanel scopeAngle;
 	private ScopePanel scopeRate;
-	public Timer timer;
-	private double dt;
-
-	private boolean pause = false;
 
 	public DoublePendulumGui() {
 		setFocusable(true);
 		addKeyListener(this);
-
-		DoublePendulumListener listener = new DoublePendulumListener(this);
-
-		dt = 1.0/frames_per_second;
-		timer = new Timer((int)(1000*dt), listener);
 
 		// Create the pendulum
 		doublependulum = new DoublePendulum();
@@ -57,7 +49,7 @@ public class DoublePendulumGui extends JPanel implements KeyListener{
 		phi.put(doublependulum.z[1]);
 		t.put(time);
 
-		rate = new IO_Double(0.1,1,3,"timeRate");
+		timeRate = new IO_Double(0.25,1.0,2.5,"Time Rate");
 
 		scopeAngle = new ScopePanel(t,th);
 		scopeAngle.xDataIsMonotonic = true;
@@ -86,9 +78,9 @@ public class DoublePendulumGui extends JPanel implements KeyListener{
 		/// Assemble sub-sub panel:
 		JPanel infoPanel = new JPanel();
 		infoPanel.setLayout(new GridLayout(3,1));
-		infoPanel.add(rate.slider);
+		infoPanel.add(timeRate.slider);
 		infoPanel.add(new JLabel("Space = toggle simulation"));
-		
+
 		/// Assemble sub JPanel right
 		JPanel graphicsPanel = new JPanel();
 		graphicsPanel.setLayout(new GridLayout(2,1));
@@ -102,61 +94,45 @@ public class DoublePendulumGui extends JPanel implements KeyListener{
 		setVisible(true);
 	}
 
-	// Main simulation stuff goes here
-	public void step(){
-
-		if (!pause){
-
-			double h = dt*rate.get();
-
-			doublependulum.timeStep(h);
-			time += h;
-
-			th.put(doublependulum.z[0]);
-			phi.put(doublependulum.z[1]);
-			t.put(time);
-			scopeAngle.update();
-			scopeRate.update();
-
-			doublependulum.plot.repaint();
-		}
-
-	};
-
 	@Override
 	public void keyReleased(KeyEvent e) {}
 	@Override
 	public void keyTyped(KeyEvent e) {}
 	@Override
 	public void keyPressed(KeyEvent e) {
-		System.out.println(KeyEvent.getKeyText(e.getKeyCode()));
-
+//		System.out.println(KeyEvent.getKeyText(e.getKeyCode()));
 		switch(e.getKeyCode()) {
 		case KeyEvent.VK_SPACE:  // Toggle simulation pause
-			pause = !pause;
-			break;
-		case KeyEvent.VK_R:  // Reset the timer rate
-			rate.set(1.0);
+			isPaused = !isPaused;
 			break;
 		default:
-		}
+		} 
 
 	}
 
-	public class DoublePendulumListener implements ActionListener {
-
-		private DoublePendulumGui gui;
-
-		public DoublePendulumListener(DoublePendulumGui gui) {
-			this.gui = gui;
-		}
-
-		@Override
-		public void actionPerformed(ActionEvent arg0) {
-			gui.step();
-		}
-
+	@Override
+	public void timeStep(double dt) {
+		doublependulum.timeStep(dt);		
 	}
 
+	@Override
+	public void updateGraphics() {
+		th.put(doublependulum.z[0]);
+		phi.put(doublependulum.z[1]);
+		t.put(doublependulum.time);
+		scopeAngle.update();
+		scopeRate.update();
+		doublependulum.plot.repaint();		
+	}
+
+	@Override
+	public double getTimeRate() {
+		return timeRate.get();
+	}
+
+	@Override
+	public boolean isPaused() {
+		return isPaused;
+	}
 
 }

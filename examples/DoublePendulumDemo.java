@@ -4,9 +4,13 @@ import java.awt.BorderLayout;
 
 import javax.swing.JFrame;
 
+import mpk_dsc.Animator;
+
 /** A demonstration for a double pendulum*/
 public class DoublePendulumDemo {
 
+	public static double frames_per_second = 30;
+	
 	public static void main(String[] args) {
 
 		JFrame frame = new JFrame("Double Pendulum Animation");
@@ -15,11 +19,12 @@ public class DoublePendulumDemo {
         
         DoublePendulumGui gui = new DoublePendulumGui();
         frame.add(gui,BorderLayout.CENTER);
-                
-        gui.timer.start();
         
 		frame.setSize (1200, 800);  //  (width, height)
-        frame.setVisible(true);        
+        frame.setVisible(true);     
+            
+        Animator animator = new Animator(gui);
+        animator.run();
 		
 	}
 
