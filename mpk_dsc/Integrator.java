@@ -5,89 +5,139 @@ package mpk_dsc;
  * [x0,x1,...,xN,v0,v1,...,vN] where xi is position, and vi is velocity */
 public class Integrator {
 
-	private DynamicalSystem dynamicalSystem;
+	private DynamicalSystem sys;
 
 	/** Determine which method to use */
 	public Method method = Method.EULER;
 
 	/// Temp variables
-	private double[] z, dz;
-	private double[] z2, z3, z4;
-	private double[] dz1, dz2, dz3, dz4; // For Runge-Kutta 4th order method
+	private double[] p1, p2, p3, p4; // Positions throughout the interval
+	private double[] v1, v2, v3, v4; // Velocity throughout the interval
+	private double[] a1, a2, a3, a4; // Acceleration throughout the interval
 	private int n;  // Dimension of the state space
+
+	/// Weights for the 4th order symplectic integrator
+	private double c1,c2,c3,c4;
+	private double d1,d2,d3,d4;
 	
 	/** Create a new integrator */
 	public Integrator(DynamicalSystem dynamicalSystem){
-		this.dynamicalSystem = dynamicalSystem;
-		n = dynamicalSystem.getState().length;
-		z = new double[n];
-		z2 = new double[n];
-		z3 = new double[n];
-		z4 = new double[n];
-		dz = new double[n];
-		dz1 = new double[n];
-		dz2 = new double[n];
-		dz3 = new double[n];
-		dz4 = new double[n];
+		this.sys = dynamicalSystem;
+		n = dynamicalSystem.getPos().length;
+		p1 = new double[n];  // Position at start of interval
+		p2 = new double[n];
+		p3 = new double[n];
+		p4 = new double[n];
+		v1 = new double[n]; // Velocity at start of interval
+		v2 = new double[n];
+		v3 = new double[n];
+		v4 = new double[n];
+		a1 = new double[n]; // Acceleration at start of interval
+		a2 = new double[n];
+		a3 = new double[n];
+		a4 = new double[n];
+		
+		/// Weights from:
+		/// http://en.wikipedia.org/wiki/Symplectic_integrator#A_fourth-order_example
+		double alpha = Math.pow(2.0,1.0/3.0);
+		c1 = 0.5/(2.0-alpha);
+		c2 = 0.5*(1-alpha)/(2-alpha);
+		c3 = c2;
+		c4 = c1;
+		d1 = 1/(2-alpha);
+		d2 = -alpha/(2-alpha);
+		d3 = 1/(2-alpha);
+		d4 = 0.0;
+		
 	}
 
 	/** Select which algorithm to use */
 	public enum Method {
 		EULER,   // Euler's method 
-		RK4   // 4th-order Runge-Kutta
+		SYM1,  // Symplectic Euler
+		RK4,   // 4th-order Runge-Kutta
+		SYM2   // Symplectic 2nd order (Verlet)
 	}
-	
+
 	/** Take a single time step of the system */
 	public void timeStep(double dt){
 		timeStep(dt,1);
 	}
-	
+
 	/** Integrate the system. 
 	 * @param DT = the total time of integration
 	 * @param nSubSteps = number of steps to take over interval*/
 	public void timeStep(double DT, int nSubSteps){
 
-		z = dynamicalSystem.getState();
-		int n = z.length;
+		p1 = sys.getPos();
+		v1 = sys.getVel();
 
 		double dt = DT/nSubSteps;
 
 		for (int i=0; i<nSubSteps; i++){
-			
-			dz = dynamicalSystem.dynamics(z);
+
+			a1 = sys.dynamics(p1,v1);
 
 			switch (method) {
 			case EULER:
 				for (int j=0; j<n; j++){
-					z[j] = z[j] + dt*dz[j];
+					p1[j] = p1[j] + dt*v1[j];
+					v1[j] = v1[j] + dt*a1[j];
 				}
 				break;
-
 			case RK4:   // 4th-order Runge-Kutta
-
-				dz1 = dz;
-
-				for (int j=0; j<n; j++)   z2[j] = z[j] + 0.5*dt*dz1[j];
-				dz2 = dynamicalSystem.dynamics(z2);
-
-				for (int j=0; j<n; j++)   z3[j] = z[j] + 0.5*dt*dz2[j];
-				dz3 = dynamicalSystem.dynamics(z3);
-
-				for (int j=0; j<n; j++)   z4[j] = z[j] + dt*dz3[j];
-				dz4 = dynamicalSystem.dynamics(z4);
-
-				for (int j=0; j<n; j++) {
-					z[j] = z[j] + (dt/6.0)*(dz1[j] + 2.0*dz2[j] + 2.0*dz3[j] + dz4[j]);
-				}
 				
+				/// First estimate of the midpoint:
+				for (int j=0; j<n; j++) {
+					p2[j] = p1[j] + 0.5*dt*v1[j];
+					v2[j] = v1[j] + 0.5*dt*a1[j];
+				} a2 = sys.dynamics(p2, v2);
+				
+				/// Second estimate of the midpoint:
+				for (int j=0; j<n; j++) {
+					p3[j] = p1[j] + 0.5*dt*v2[j];
+					v3[j] = v1[j] + 0.5*dt*a2[j];
+				} a3 = sys.dynamics(p3, v3);
+				
+				/// First estimate of the endpoint:
+				for (int j=0; j<n; j++) {
+					p4[j] = p1[j] + dt*v3[j];
+					v4[j] = v1[j] + dt*a3[j];
+				} a4 = sys.dynamics(p4, v4);
+
+				/// Final estimate of the endpoint:
+				for (int j=0; j<n; j++) {
+					p1[j] = p1[j] + (dt/6.0)*(v1[j] + 2.0*v2[j] + 2.0*v3[j] + v4[j]);
+					v1[j] = v1[j] + (dt/6.0)*(a1[j] + 2.0*a2[j] + 2.0*a3[j] + a4[j]);
+				}
 				break;
+				
+			case SYM1:
+				for (int j=0; j<n; j++){
+					v1[j] = v1[j] + dt*a1[j];
+					p1[j] = p1[j] + dt*v1[j]; // Uses updated velocity!
+				}
+				break;
+				
+			case SYM2:   // Second Order Symplectic Integrator (Verlet)
+				for (int j=0; j<n; j++){
+					p2[j] = p1[j] + dt*v1[j] + 0.5*dt*dt*a1[j]; 
+				}
+				a2 = sys.dynamics(p2,v1);
+				for (int j=0; j<n; j++){
+					p1[j] = p2[j];
+					v1[j] = v1[j] + 0.5*dt*(a1[j]+a2[j]);
+				}
+				break;
+				
 				
 			}
 
 		}
 
-		dynamicalSystem.setState(z);
-		dynamicalSystem.setTime(dynamicalSystem.getTime() + DT);
+		sys.setPos(p1);
+		sys.setVel(v1);
+		sys.setTime(sys.getTime() + DT);
 	}
 
 }

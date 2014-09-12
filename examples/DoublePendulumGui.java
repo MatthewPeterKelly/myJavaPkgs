@@ -44,8 +44,8 @@ public class DoublePendulumGui extends JPanel implements KeyListener, AnimatedSy
 		phi = new RingBuffer(nBuffer);
 		energy = new RingBuffer(nBuffer);
 
-		th.put(doublependulum.getState()[0]);
-		phi.put(doublependulum.getState()[1]);
+		th.put(doublependulum.getPos()[0]);
+		phi.put(doublependulum.getPos()[1]);
 		t.put(time);
 
 		timeRate = new IO_Double(0.1,1.0,2.0,"Time Rate");
@@ -116,6 +116,13 @@ public class DoublePendulumGui extends JPanel implements KeyListener, AnimatedSy
 		case KeyEvent.VK_SPACE:  // Toggle simulation pause
 			isPaused = !isPaused;
 			break;
+		case KeyEvent.VK_ESCAPE:  // Restart the simulation
+			doublependulum.reset();
+			th.reset();
+			phi.reset();
+			t.reset();
+			energy.reset();
+			break;
 		default:
 		} 
 
@@ -128,8 +135,8 @@ public class DoublePendulumGui extends JPanel implements KeyListener, AnimatedSy
 
 	@Override
 	public void updateGraphics() {
-		th.put(doublependulum.getState()[0]);
-		phi.put(doublependulum.getState()[1]);
+		th.put(doublependulum.getPos()[0]);
+		phi.put(doublependulum.getPos()[1]);
 		energy.put(doublependulum.getEnergy()[0]);
 		t.put(doublependulum.getTime());
 		scopeAngle.update();

@@ -5,10 +5,11 @@ import mpk_gui.DrawPanel;
 /** This is where the drawing takes place */
 public class Pendulum implements DynamicalSystem{
 
-	private double[] z0 = new double[] {1.8,0.0};  // Initial state
+	private double th0 = 1.8;  // Initial angle
+	private double w0 = 0.0;  // Initial rate
+	private double[] th = new double[1];  // Angle
+	private double[] w = new double[1];   // Rate
 	
-	private double[] z = new double[2];   // The state of the pendulum
-	private double[] dz = new double[2];  // The derivative of the state
 	public double tau = 0;
 
 	private double time = 0.0;
@@ -21,7 +22,7 @@ public class Pendulum implements DynamicalSystem{
 	private double l = 0.3;  // (m) length
 	private double c = 0.0;  // (N*m*s) damping
 
-	private double maxTimeStep = 0.01;
+	private double maxTimeStep = 0.02;
 	
 	private Integrator integrator;
 
@@ -32,28 +33,29 @@ public class Pendulum implements DynamicalSystem{
 		super(); // Create a draw panel 
 
 		integrator = new Integrator(this);
-		integrator.method = Integrator.Method.RK4;
+		integrator.method = Integrator.Method.SYM2;  // {EULER, RK4, SYM1, SYM2}
 		
 		reset();
 		
 		plot = new PendulumPlotter();
 	}
-
-	/** Returns the current state vector */
+		
+	/** Computes the dynamics for a single pendulum with damping and control 
+	 * m*l*l*ddTh + c*dTh + m*g*l*Math.sin(th) = tau
+	 * ddTh = tau/(m*l*l) - (c*dTh)/(m*l*l) - (g/l)*Math.sin(th) */
 	@Override
-	public double[] getState(){
-		return z;
-	}
+	public double[] dynamics(double[] p, double[] v){
 
-	/** Sets the current state */
-	@Override
-	public void setState(double[] z){
-		this.z = z;
-	}
+		double th = p[0];
+		double w = v[0];
 	
+		return new double[] {tau/(m*l*l) - (c*w)/(m*l*l) - (g/l)*Math.sin(th)};
+
+	}
+
 	public void reset(){
-		z[0] = z0[0]; 
-		z[1] = z0[1];
+		th[0] = th0;
+		w[0] = w0;
 		time = 0.0;
 	}
 	
@@ -66,23 +68,7 @@ public class Pendulum implements DynamicalSystem{
 	public void setMaxTimeStep(double dt){
 		maxTimeStep = dt;
 	}
-	
-	/** Computes the dynamics for a single pendulum with damping and control 
-	 * m*l*l*ddTh + c*dTh + m*g*l*Math.sin(th) = tau
-	 * ddTh = tau/(m*l*l) - (c*dTh)/(m*l*l) - (g/l)*Math.sin(th) */
-	@Override
-	public double[] dynamics(double[] z){
-
-		double th = z[0];
-		double w = z[1];
-
-		dz[0] = w;
-		dz[1] = tau/(m*l*l) - (c*w)/(m*l*l) - (g/l)*Math.sin(th);
-
-		return dz;
-
-	}
-
+		
 	@Override
 	public void timeStep(double dt) {
 		integrator.timeStep(dt);
@@ -97,10 +83,10 @@ public class Pendulum implements DynamicalSystem{
 	/** Return the system's mechanical energy
 	 * @return energy[] = {total, kinetic, potential}*/
 	public double[] getEnergy(){
-//		double x = l*Math.sin(z[0]);
-		double y = -l*Math.cos(z[0]);
-		double dx = l*Math.cos(z[0])*z[1];
-		double dy = l*Math.sin(z[0])*z[1];
+//		double x = l*Math.sin(th[0]);
+		double y = -l*Math.cos(th[0]);
+		double dx = l*Math.cos(th[0])*w[0];
+		double dy = l*Math.sin(th[0])*w[0];
 		double kinetic = 0.5*m*(dx*dx+dy*dy);
 		double potential = m*g*(y+l); 
 		double total = kinetic + potential;
@@ -125,8 +111,8 @@ public class Pendulum implements DynamicalSystem{
 
 		@Override
 		public void paint() {
-			double x = l*Math.sin(z[0]);
-			double y = -l*Math.cos(z[0]);
+			double x = l*Math.sin(th[0]);
+			double y = -l*Math.cos(th[0]);
 			setLineWidth(6);
 			drawLine(0,0,x,y);
 			fillCircle(0,0,0.1*l);
@@ -152,5 +138,26 @@ public class Pendulum implements DynamicalSystem{
 	public void setTime(double t) {
 		time = t;		
 	}
+
+	@Override
+	public double[] getPos() {
+		return th;
+	}
+
+	@Override
+	public double[] getVel() {
+		return w;
+	}
+
+	@Override
+	public void setPos(double[] p) {
+		th[0] = p[0];		
+	}
+
+	@Override
+	public void setVel(double[] v) {
+		w[0] = v[0];		
+	}
+
 	
 }

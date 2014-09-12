@@ -4,20 +4,32 @@ package mpk_dsc;
  * integration methods */
 public interface DynamicalSystem {
 
-	/** @return the state vector */
-	public double[] getState();
+	/** @return the position */
+	public double[] getPos();
+	
+	/** @return the velocity */
+	public double[] getVel();
 	
 	/** @return the system time */
 	public double getTime();
 	
-	/** @param z the state vector */
-	public void setState(double[] z);
+	/** @param p the position vector */
+	public void setPos(double[] p);
+	
+	/** @param v the velocity vector */
+	public void setVel(double[] v);
 	
 	/** @param t the system time */
 	public void setTime(double t);
 	
-	/** @return z the time derivative of the state vector */
-	public double[] dynamics(double[] z);
+	/** Reset the system to initial state */
+	public void reset();
+	
+	/** Computes the dynamics of a second order system
+	 * @param p = position vector
+	 * @param v = velocity vector
+	 * @return dv = derivative of the velocity vector*/
+	public double[] dynamics(double[] p, double[]v);
 	
 	/** Take a single time step using the default integration method
 	 * @param dt the time step for the integration method */

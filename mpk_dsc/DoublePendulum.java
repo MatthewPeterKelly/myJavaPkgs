@@ -6,8 +6,10 @@ import mpk_gui.DrawPanel;
 public class DoublePendulum implements DynamicalSystem{
 
 	// The state of the pendulum {th,phi,dth,dphi}
-	private double[] z = new double[] {1.8, 1.7, 0.0,0.0};   
-	private double[] dz = new double[4];  // The derivative of the state
+	private double[] th0 = {1.8,0.5};
+	private double[] w0 = {0.0, 0.0};
+	private double[] th = new double[2];
+	private double[] w = new double[2];  // The derivative of the state
 	private double time = 0.0;
 	private boolean displayTime = true; //Prints the simulation time on plot
 	
@@ -29,34 +31,22 @@ public class DoublePendulum implements DynamicalSystem{
 		super(); // Create a draw panel 
 
 		integrator = new Integrator(this);
-		integrator.method = Integrator.Method.RK4;
+		integrator.method = Integrator.Method.SYM2;  // {EULER, RK4, SYM1, SYM2}
 
 		plot = new PendulumPlotter();
-	}
-
-	/** Returns the current state vector */
-	@Override
-	public double[] getState(){
-		return z;
-	}
-
-	/** Sets the current state */
-	@Override
-	public void setState(double[] z){
-		this.z = z;
 	}
 	
 	/** Get the system energy
 	 * @return {total, kinetic, potential} */
 	public double[] getEnergy(){
-//		double x1 = l*Math.cos(z[0]);
-		double y1 = l*Math.sin(z[0]);
-//		double x2 = x1 + l*Math.cos(z[1]);
-		double y2 = y1 + l*Math.sin(z[1]);
-		double dx1 = -l*Math.sin(z[0])*dz[0];
-		double dy1 = l*Math.cos(z[0])*dz[0];
-		double dx2 = dx1 - l*Math.sin(z[1])*dz[1];
-		double dy2 = dy1 + l*Math.cos(z[1])*dz[1];
+//		double x1 = l*Math.cos(th[0]);
+		double y1 = l*Math.sin(th[0]);
+//		double x2 = x1 + l*Math.cos(th[1]);
+		double y2 = y1 + l*Math.sin(th[1]);
+		double dx1 = -l*Math.sin(th[0])*w[0];
+		double dy1 = l*Math.cos(th[0])*w[0];
+		double dx2 = dx1 - l*Math.sin(th[1])*w[1];
+		double dy2 = dy1 + l*Math.cos(th[1])*w[1];
 		
 		double kinetic = 0.5*(m1*(dx1*dx1+dy1*dy1) + m2*(dx2*dx2+dy2*dy2));
 		double potential = g*(m1*y1 + m2*y2) - energyDatum;
@@ -68,7 +58,7 @@ public class DoublePendulum implements DynamicalSystem{
 	/** Computes the dynamics for a double pendulum. These equations were
 	 * derived automatically using Matlab */
 	@Override
-	public double[] dynamics(double[] z){
+	public double[] dynamics(double[] p, double[] v){
 
 		// Declare variables:                                     
 		double th, phi, Dth, Dphi;    //State variables          
@@ -81,10 +71,10 @@ public class DoublePendulum implements DynamicalSystem{
 		double  DDphi;                 
 		
 		// Store the state variables                         
-		th     = z[0];                                     
-		phi    = z[1];                                     
-		Dth    = z[2];                                     
-		Dphi   = z[3];                                     
+		th     = p[0];                                     
+		phi    = p[1];                                     
+		Dth    = v[0];                                     
+		Dphi   = v[1];                                     
 
 		// Store the input variables (none for now)                    
 		M1   = 0; // U[0];                                       
@@ -119,14 +109,8 @@ public class DoublePendulum implements DynamicalSystem{
 		tmp22 = Math.sin(tmp10);  
 		tmp23 = -tmp14+tmp20;  
 		DDphi =  -(1.0/(l*l)*(M2*m1*-2.0-M2*m2*2.0+M1*m2*tmp11*2.0-M2*m2*tmp11*2.0+tmp18*tmp19*tmp21*tmp22*2.0-F1_x*l*m2*tmp13+F1_y*l*m2*tmp12+F2_x*l*m1*tmp13*2.0-F2_y*l*m1*tmp12*2.0+F2_x*l*m2*tmp13-F2_y*l*m2*tmp12+F1_y*l*m2*tmp16+F1_x*l*m2*tmp17+F2_y*l*m2*tmp16+F2_x*l*m2*tmp17+(Dphi*Dphi)*tmp18*tmp19*Math.sin(tmp23)+l*g*tmp12*tmp18-l*g*tmp16*tmp18+l*g*m1*m2*tmp12-l*g*m1*m2*tmp16+m1*m2*tmp19*tmp21*tmp22*2.0))/(m2*(m1*2.0+m2-m2*Math.cos(tmp23)));  
-
-		// Pack up the state derivative                    
-		dz[0] = Dth;                                     
-		dz[1] = Dphi;                                     
-		dz[2] = DDth;                                     
-		dz[3] = DDphi;                                     
-
-		return dz;
+                 
+		return new double[] {DDth, DDphi};
 
 	}
 
@@ -159,10 +143,10 @@ public class DoublePendulum implements DynamicalSystem{
 
 		@Override
 		public void paint() {
-			double x1 = l*Math.cos(z[0]);
-			double y1 = l*Math.sin(z[0]);
-			double x2 = x1 + l*Math.cos(z[1]);
-			double y2 = y1 + l*Math.sin(z[1]);
+			double x1 = l*Math.cos(th[0]);
+			double y1 = l*Math.sin(th[0]);
+			double x2 = x1 + l*Math.cos(th[1]);
+			double y2 = y1 + l*Math.sin(th[1]);
 			setLineWidth(6);
 			fillRect(-0.1*l, 0.1*l, 0.2*l, 0.2*l);	
 			drawLine(0,0,x1,y1);
@@ -186,7 +170,32 @@ public class DoublePendulum implements DynamicalSystem{
 	public void setTime(double t) {
 		time = t;
 	}
-	
-	
+
+	@Override
+	public double[] getPos() {
+		return th;
+	}
+
+	@Override
+	public double[] getVel() {
+		return w;
+	}
+
+	@Override
+	public void setPos(double[] p) {
+		th = p.clone();
+	}
+
+	@Override
+	public void setVel(double[] v) {
+		w = v.clone();
+	}
+
+	@Override
+	public void reset() {
+		th = th0.clone();
+		w = w0.clone();
+		time = 0.0;		
+	}	
 
 }

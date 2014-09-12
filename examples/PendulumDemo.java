@@ -46,7 +46,7 @@ public class PendulumDemo implements KeyListener, AnimatedSystem{
 		timeRate = new IO_Double(0.1,1.0,5.0,"Time Rate");
 		timeRate.set(1.0);
 		damping = new IO_Double(-0.25,0.0,0.25,"Damping");
-		timeStep = new IO_Double(0.005,0.01,0.1,"Time Step");
+		timeStep = new IO_Double(0.005,0.02,0.2,"Time Step");
 		
 		/// Data Logging
 		int nBuffer = 500;  
@@ -133,8 +133,8 @@ public class PendulumDemo implements KeyListener, AnimatedSystem{
 
 	@Override
 	public void updateGraphics() {
-		th.put(pendulum.getState()[0]);
-		w.put(pendulum.getState()[1]);
+		th.put(pendulum.getPos()[0]);
+		w.put(pendulum.getVel()[0]);
 		energy.put(pendulum.getEnergy()[0]);
 		t.put(pendulum.getTime());
 
