@@ -120,6 +120,7 @@ public class Integrator {
 				break;
 				
 			case SYM2:   // Second Order Symplectic Integrator (Verlet)
+				// http://en.wikipedia.org/wiki/Verlet_integration
 				for (int j=0; j<n; j++){
 					p2[j] = p1[j] + dt*v1[j] + 0.5*dt*dt*a1[j]; 
 				}
