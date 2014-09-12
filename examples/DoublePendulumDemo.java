@@ -8,8 +8,6 @@ import mpk_dsc.Animator;
 
 /** A demonstration for a double pendulum*/
 public class DoublePendulumDemo {
-
-	public static double frames_per_second = 30;
 	
 	public static void main(String[] args) {
 

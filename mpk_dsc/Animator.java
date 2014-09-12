@@ -5,7 +5,11 @@ import java.awt.event.ActionListener;
 
 import javax.swing.Timer;
 
-/** A class for running simple animations that have interactive timing features.
+/** A class for running simple animations. An interface is used that allows
+ * for simple user interactions, such as pausing the simulation and adjusting 
+ * the time rate. The timing will be good if the simulation and graphics calls
+ * happen quickly. Otherwise, they will be pushed through the system as fast 
+ * as possible.
  * @author matt
  */
 public class Animator {
@@ -31,10 +35,9 @@ public class Animator {
 	}
 
 	public class TimingListener implements ActionListener {
-		boolean lock = false;
 		@Override
-		public void actionPerformed(ActionEvent arg0) {
-			if (!sys.isPaused()){
+		public void actionPerformed(ActionEvent arg0) {		
+			if (!sys.isPaused()){ /// THE IMPORTANT STUFF
 				sys.simulate(sys.getTimeRate()/framesPerSecond); // Physics
 				sys.updateGraphics(); // Run graphics
 			}

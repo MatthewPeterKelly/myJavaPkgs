@@ -1,14 +1,9 @@
 package mpk_gui;
 
-import java.awt.Dimension;
-
-import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JCheckBox;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-
-import com.sun.prism.paint.Color;
 
 /** This class wraps a boolean value for interfacing with the GUI */
 @SuppressWarnings("serial")

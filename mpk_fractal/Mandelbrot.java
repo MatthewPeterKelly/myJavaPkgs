@@ -26,7 +26,7 @@ public class Mandelbrot extends JPanel implements MouseInputListener, KeyListene
 	private int panRate = 25;
 
 	/** Maximum number of iterations */
-	private int maxIter = 250;
+	private int maxIter = 150;
 
 	/** The center point of the image */
 	private double[] center = {0.0,0.0};

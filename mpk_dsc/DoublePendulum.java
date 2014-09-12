@@ -6,10 +6,10 @@ import mpk_gui.DrawPanel;
 public class DoublePendulum implements DynamicalSystem{
 
 	// The state of the pendulum {th,phi,dth,dphi}
-	public double[] z = new double[] {1.8, 1.7, 0.0,0.0};   
-	public double[] dz = new double[4];  // The derivative of the state
-	public double time = 0.0;
-	public boolean displayTime = true; //Prints the simulation time on plot
+	private double[] z = new double[] {1.8, 1.7, 0.0,0.0};   
+	private double[] dz = new double[4];  // The derivative of the state
+	private double time = 0.0;
+	private boolean displayTime = true; //Prints the simulation time on plot
 	
 	/* parameters for the double pendulum */
 	private double m1 = 1.0;  // (kg) mass of bob 1 (end of first massless link)
@@ -132,17 +132,13 @@ public class DoublePendulum implements DynamicalSystem{
 
 	@Override
 	public void timeStep(double dt) {
-		integrator.number_of_substeps = 1;  
 		integrator.timeStep(dt);
-		time += dt;
 	}
 	
 	@Override
 	public void simulate(double duration){
 		int nSteps = (int)(Math.ceil(duration/maxTimeStep));
-		integrator.number_of_substeps = nSteps;
-		integrator.timeStep(duration/nSteps);
-		time += duration;
+		integrator.timeStep(duration/nSteps, nSteps);
 	}
 
 	/** ********************************************************************
@@ -179,6 +175,16 @@ public class DoublePendulum implements DynamicalSystem{
 			}
 		}
 		
+	}
+
+	@Override
+	public double getTime() {
+		return time;
+	}
+
+	@Override
+	public void setTime(double t) {
+		time = t;
 	}
 	
 	

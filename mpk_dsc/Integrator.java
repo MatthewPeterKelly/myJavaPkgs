@@ -1,12 +1,11 @@
 package mpk_dsc;
 
-/** This class contains several different integration methods */
+/** This class contains several different integration methods. Note 
+ * that the symplectic methods assume that the state is of the form:
+ * [x0,x1,...,xN,v0,v1,...,vN] where xi is position, and vi is velocity */
 public class Integrator {
 
 	private DynamicalSystem dynamicalSystem;
-
-	/** How many sub steps should the integration method take? Must be >= 1 */
-	public int number_of_substeps = 1;
 
 	/** Determine which method to use */
 	public Method method = Method.EULER;
@@ -34,19 +33,26 @@ public class Integrator {
 
 	/** Select which algorithm to use */
 	public enum Method {
-		EULER,
-		RK4
+		EULER,   // Euler's method 
+		RK4   // 4th-order Runge-Kutta
 	}
-
-	/** Integrate the system */
-	public void timeStep(double DT){
+	
+	/** Take a single time step of the system */
+	public void timeStep(double dt){
+		timeStep(dt,1);
+	}
+	
+	/** Integrate the system. 
+	 * @param DT = the total time of integration
+	 * @param nSubSteps = number of steps to take over interval*/
+	public void timeStep(double DT, int nSubSteps){
 
 		z = dynamicalSystem.getState();
 		int n = z.length;
 
-		double dt = DT/number_of_substeps;
+		double dt = DT/nSubSteps;
 
-		for (int i=0; i<number_of_substeps; i++){
+		for (int i=0; i<nSubSteps; i++){
 			
 			dz = dynamicalSystem.dynamics(z);
 
@@ -81,7 +87,7 @@ public class Integrator {
 		}
 
 		dynamicalSystem.setState(z);
-
+		dynamicalSystem.setTime(dynamicalSystem.getTime() + DT);
 	}
 
 }

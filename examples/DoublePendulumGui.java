@@ -17,17 +17,13 @@ import mpk_gui.ScopePanel;
 @SuppressWarnings("serial")
 public class DoublePendulumGui extends JPanel implements KeyListener, AnimatedSystem{
 
-	public final double dt = 0.005;
-	public final double frames_per_second = 60.0;
-
-	private final double buffer_duration = 7.5;  // Seconds
 
 	private boolean isPaused = false;
 	
 	private DoublePendulum doublependulum;
 	private double time;
 	private IO_Double timeRate;
-	private int nBuffer = (int) (buffer_duration*frames_per_second);   /// Keep 10 seconds worth of data
+	private int nBuffer = 200; 
 	private RingBuffer th;
 	private RingBuffer phi;
 	private RingBuffer energy;
@@ -48,11 +44,12 @@ public class DoublePendulumGui extends JPanel implements KeyListener, AnimatedSy
 		phi = new RingBuffer(nBuffer);
 		energy = new RingBuffer(nBuffer);
 
-		th.put(doublependulum.z[0]);
-		phi.put(doublependulum.z[1]);
+		th.put(doublependulum.getState()[0]);
+		phi.put(doublependulum.getState()[1]);
 		t.put(time);
 
-		timeRate = new IO_Double(0.25,1.0,2.5,"Time Rate");
+		timeRate = new IO_Double(0.1,1.0,2.0,"Time Rate");
+		timeRate.set(1.0);
 
 		scopeAngle = new ScopePanel(t,th);
 		scopeAngle.xDataIsMonotonic = true;
@@ -131,10 +128,10 @@ public class DoublePendulumGui extends JPanel implements KeyListener, AnimatedSy
 
 	@Override
 	public void updateGraphics() {
-		th.put(doublependulum.z[0]);
-		phi.put(doublependulum.z[1]);
+		th.put(doublependulum.getState()[0]);
+		phi.put(doublependulum.getState()[1]);
 		energy.put(doublependulum.getEnergy()[0]);
-		t.put(doublependulum.time);
+		t.put(doublependulum.getTime());
 		scopeAngle.update();
 		scopeRate.update();
 		scopeEnergy.update();

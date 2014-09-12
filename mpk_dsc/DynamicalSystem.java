@@ -7,8 +7,14 @@ public interface DynamicalSystem {
 	/** @return the state vector */
 	public double[] getState();
 	
+	/** @return the system time */
+	public double getTime();
+	
 	/** @param z the state vector */
 	public void setState(double[] z);
+	
+	/** @param t the system time */
+	public void setTime(double t);
 	
 	/** @return z the time derivative of the state vector */
 	public double[] dynamics(double[] z);
