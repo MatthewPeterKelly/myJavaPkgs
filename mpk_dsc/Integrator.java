@@ -15,10 +15,6 @@ public class Integrator {
 	private double[] v1, v2, v3, v4; // Velocity throughout the interval
 	private double[] a1, a2, a3, a4; // Acceleration throughout the interval
 	private int n;  // Dimension of the state space
-
-	/// Weights for the 4th order symplectic integrator
-	private double c1,c2,c3,c4;
-	private double d1,d2,d3,d4;
 	
 	/** Create a new integrator */
 	public Integrator(DynamicalSystem dynamicalSystem){
@@ -36,18 +32,6 @@ public class Integrator {
 		a2 = new double[n];
 		a3 = new double[n];
 		a4 = new double[n];
-		
-		/// Weights from:
-		/// http://en.wikipedia.org/wiki/Symplectic_integrator#A_fourth-order_example
-		double alpha = Math.pow(2.0,1.0/3.0);
-		c1 = 0.5/(2.0-alpha);
-		c2 = 0.5*(1-alpha)/(2-alpha);
-		c3 = c2;
-		c4 = c1;
-		d1 = 1/(2-alpha);
-		d2 = -alpha/(2-alpha);
-		d3 = 1/(2-alpha);
-		d4 = 0.0;
 		
 	}
 
