@@ -77,7 +77,7 @@ public class Pendulum implements DynamicalSystem{
 	@Override
 	public void simulate(double duration){
 		int nSteps = (int)(Math.ceil(duration/maxTimeStep));
-		integrator.timeStep(duration/nSteps, nSteps);
+		integrator.timeStep(duration, nSteps);
 	}
 	
 	/** Return the system's mechanical energy
