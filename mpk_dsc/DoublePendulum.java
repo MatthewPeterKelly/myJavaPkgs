@@ -18,7 +18,8 @@ public class DoublePendulum implements DynamicalSystem{
 	private double m2 = 1.0;  // (kg) mass of bob 2 (end of second massless link)
 	private double g = 9.81; // (m/s^2) gravity
 	private double l = 1.0;  // (m) length of one link (both are the same)
-
+	private double damping = 0.0; // Viscous damping in both links
+	
 	private double maxTimeStep = 0.01;
 	private double energyDatum = -m1*g*l + -m2*g*(2*l);
 	
@@ -31,7 +32,7 @@ public class DoublePendulum implements DynamicalSystem{
 		super(); // Create a draw panel 
 
 		integrator = new Integrator(this);
-		integrator.method = Integrator.Method.SYM2;  // {EULER, RK4, SYM1, SYM2}
+		integrator.method = Integrator.Method.RK4;  // {EULER, RK4, SYM1, SYM2}
 
 		plot = new PendulumPlotter();
 	}
@@ -76,9 +77,11 @@ public class DoublePendulum implements DynamicalSystem{
 		Dth    = v[0];                                     
 		Dphi   = v[1];                                     
 
-		// Store the input variables (none for now)                    
-		M1   = 0; // U[0];                                       
-		M2   = 0; // U[1];                                       
+		// Model viscous damping as an external moment on each joint
+		M1 = -Dth*damping;
+		M2 = -(Dphi-Dth)*damping;
+		
+		// For now, no external force acts on the joints                                                     
 		F1_x = 0; // U[2];                                       
 		F1_y = 0; // U[3];                                       
 		F2_x = 0; // U[4];                                       
@@ -123,6 +126,16 @@ public class DoublePendulum implements DynamicalSystem{
 	public void simulate(double duration){
 		int nSteps = (int)(Math.ceil(duration/maxTimeStep));
 		integrator.timeStep(duration, nSteps);
+	}
+	
+	/** Sets the current value of the damping constant */
+	public void setDamping(double c){
+		this.damping = c;
+	}
+	
+	/** Set the maximum time step for the integrator */
+	public void setMaxTimeStep(double dt){
+		maxTimeStep = dt;
 	}
 
 	/** ********************************************************************
