@@ -76,7 +76,7 @@ public class DoublePendulumDemo extends JPanel implements KeyListener, AnimatedS
 		/// Sliders for user interaction
 		timeRate = new IO_Double(0.05,1.0,5.0,"Time Rate");
 		damping = new IO_Double(-0.1,0.0,0.4,"Damping");
-		timeStep = new IO_Double(0.001,0.005,0.2,"Time Step");
+		timeStep = new IO_Double(0.001,0.005,1/30.0,"Time Step");
 		timeRate.set(1.0); damping.set(0.0);
 
 		scopeAngle = new ScopePanel(t,th);

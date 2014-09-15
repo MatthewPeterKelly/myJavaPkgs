@@ -33,7 +33,7 @@ public class DoublePendulum implements DynamicalSystem{
 
 		integrator = new Integrator(this);
 		integrator.method = Integrator.Method.RK4;  // {EULER, RK4, SYM1, SYM2}
-
+		
 		plot = new PendulumPlotter();
 	}
 	

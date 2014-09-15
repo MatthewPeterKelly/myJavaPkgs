@@ -15,7 +15,7 @@ import javax.swing.Timer;
 public class Animator {
 
 	/** How many times to update the graphics per second */
-	public double framesPerSecond = 30;
+	private final double framesPerSecond = 30;
 
 	private AnimatedSystem sys;
 	private Timer timer;
@@ -26,6 +26,11 @@ public class Animator {
 		TimingListener listener = new TimingListener();
 		int delay = (int)(1000/framesPerSecond);  //  (milliseconds)
 		timer = new Timer(delay,listener);
+	}
+	
+	/** @return frame rate in frames per second */
+	public double getFrameRate(){
+		return framesPerSecond;
 	}
 
 	/** Run the animator object 

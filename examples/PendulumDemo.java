@@ -46,7 +46,7 @@ public class PendulumDemo implements KeyListener, AnimatedSystem{
 		timeRate = new IO_Double(0.1,1.0,5.0,"Time Rate");
 		timeRate.set(1.0);
 		damping = new IO_Double(-0.25,0.0,0.25,"Damping");
-		timeStep = new IO_Double(0.005,0.02,0.2,"Time Step");
+		timeStep = new IO_Double(0.005,0.02,1/30.0,"Time Step");
 
 		/// Data Logging
 		int nBuffer = 500;  
