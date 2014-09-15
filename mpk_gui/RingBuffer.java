@@ -61,6 +61,8 @@ public class RingBuffer {
 	 */
 	public void reset(){
 		init = false;  // Flag to overwrite all data on next run
+		put(0.0); // Overwrite data with zeros (as when initialized)
+		init = false; // Flag to overwrite with next new data point
 	}
 	
 	/** 

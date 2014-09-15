@@ -42,12 +42,12 @@ public class DoublePendulumDemo extends JPanel implements KeyListener, AnimatedS
 	private boolean isPaused = false;
 
 	private DoublePendulum doublependulum;
-	
+
 	private double time;
 	private IO_Double timeRate;
 	private IO_Double damping;
 	private IO_Double timeStep;
-	
+
 	private int nBuffer = 200; 
 	private RingBuffer th;
 	private RingBuffer phi;
@@ -78,7 +78,7 @@ public class DoublePendulumDemo extends JPanel implements KeyListener, AnimatedS
 		damping = new IO_Double(-0.1,0.0,0.4,"Damping");
 		timeStep = new IO_Double(0.001,0.005,0.2,"Time Step");
 		timeRate.set(1.0); damping.set(0.0);
-		
+
 		scopeAngle = new ScopePanel(t,th);
 		scopeAngle.xDataIsMonotonic = true;
 		scopeAngle.setAxisExtentsY(-15,15);
@@ -100,7 +100,7 @@ public class DoublePendulumDemo extends JPanel implements KeyListener, AnimatedS
 		scopeEnergy = new ScopePanel(t,energy);
 		scopeEnergy.xDataIsMonotonic = true;
 		scopeEnergy.autoPanY = false;
-		scopeEnergy.setAxisExtentsY(0,1.1*doublependulum.getEnergy()[0]);
+		scopeEnergy.setAxisExtentsY(0,2.5*doublependulum.getEnergy()[0]);
 		scopeEnergy.xLabel = "Time (s)";
 		scopeEnergy.yLabel = "Energy (J)";
 		scopeEnergy.title = "";
@@ -148,6 +148,7 @@ public class DoublePendulumDemo extends JPanel implements KeyListener, AnimatedS
 			isPaused = !isPaused;
 			break;
 		case KeyEvent.VK_ESCAPE:  // Restart the simulation
+			isPaused = true;
 			doublependulum.reset();
 			th.reset();
 			phi.reset();
@@ -168,10 +169,12 @@ public class DoublePendulumDemo extends JPanel implements KeyListener, AnimatedS
 
 	@Override
 	public void updateGraphics() {
-		th.put(doublependulum.getPos()[0]);
-		phi.put(doublependulum.getPos()[1]);
-		energy.put(doublependulum.getEnergy()[0]);
-		t.put(doublependulum.getTime());
+		if (!isPaused){
+			th.put(doublependulum.getPos()[0]);
+			phi.put(doublependulum.getPos()[1]);
+			energy.put(doublependulum.getEnergy()[0]);
+			t.put(doublependulum.getTime());
+		}
 		scopeAngle.update();
 		scopeRate.update();
 		scopeEnergy.update();

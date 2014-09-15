@@ -37,9 +37,9 @@ public class Animator {
 	public class TimingListener implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent arg0) {		
+			sys.updateGraphics(); // Run graphics
 			if (!sys.isPaused()){ /// THE IMPORTANT STUFF
 				sys.simulate(sys.getTimeRate()/framesPerSecond); // Physics
-				sys.updateGraphics(); // Run graphics
 			}
 		}
 	}

@@ -22,32 +22,32 @@ public class PendulumDemo implements KeyListener, AnimatedSystem{
 	private IO_Double damping;
 	private IO_Double timeStep;
 	private boolean isPaused = false;
-	
+
 	ScopePanel scopeAngle;
 	ScopePanel scopeRate;
 	ScopePanel scopeEnergy;
-	
+
 	RingBuffer th;
 	RingBuffer w;
 	RingBuffer t;
 	RingBuffer energy;
-	
+
 	JPanel scopePanel;
 	JPanel graphicsPanel;
 
 	Pendulum pendulum;
 
 	public PendulumDemo(){
-		
+
 		/// Create the pendulum
 		pendulum = new Pendulum();
-		
+
 		/// Sliders for user interaction
 		timeRate = new IO_Double(0.1,1.0,5.0,"Time Rate");
 		timeRate.set(1.0);
 		damping = new IO_Double(-0.25,0.0,0.25,"Damping");
 		timeStep = new IO_Double(0.005,0.02,0.2,"Time Step");
-		
+
 		/// Data Logging
 		int nBuffer = 500;  
 		th = new RingBuffer(nBuffer);
@@ -89,7 +89,7 @@ public class PendulumDemo implements KeyListener, AnimatedSystem{
 		scopePanel.add(scopeAngle);
 		scopePanel.add(scopeRate);
 		scopePanel.add(scopeEnergy);
-		
+
 		/// Assemble the graphics panel
 		graphicsPanel = new JPanel(new GridLayout(2,1));
 		graphicsPanel.add(pendulum.plot);
@@ -98,11 +98,11 @@ public class PendulumDemo implements KeyListener, AnimatedSystem{
 		sliderPanel.add(damping.slider);
 		sliderPanel.add(timeStep.slider);
 		graphicsPanel.add(sliderPanel);
-		
+
 		graphicsPanel.setFocusable(true);
 		graphicsPanel.addKeyListener(this);
-		
-		
+
+
 	}
 
 	public static void main (String args[]){
@@ -112,7 +112,7 @@ public class PendulumDemo implements KeyListener, AnimatedSystem{
 		application.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 		PendulumDemo gui = new PendulumDemo();
-		
+
 		application.setLayout(new GridLayout(1,2));
 		application.add(gui.scopePanel);
 		application.add(gui.graphicsPanel);
@@ -129,15 +129,16 @@ public class PendulumDemo implements KeyListener, AnimatedSystem{
 		pendulum.setDamping(damping.get());
 		pendulum.setMaxTimeStep(timeStep.get());
 		pendulum.simulate(duration);
-		}
+	}
 
 	@Override
 	public void updateGraphics() {
-		th.put(pendulum.getPos()[0]);
-		w.put(pendulum.getVel()[0]);
-		energy.put(pendulum.getEnergy()[0]);
-		t.put(pendulum.getTime());
-
+		if (!isPaused){
+			th.put(pendulum.getPos()[0]);
+			w.put(pendulum.getVel()[0]);
+			energy.put(pendulum.getEnergy()[0]);
+			t.put(pendulum.getTime());
+		}
 		pendulum.plot.repaint();
 		scopeAngle.update();
 		scopeRate.update();
@@ -153,19 +154,20 @@ public class PendulumDemo implements KeyListener, AnimatedSystem{
 	public boolean isPaused() {
 		return isPaused;
 	}
-	
+
 	@Override
 	public void keyReleased(KeyEvent e) {}
 	@Override
 	public void keyTyped(KeyEvent e) {}
 	@Override
 	public void keyPressed(KeyEvent e) {
-//		System.out.println(KeyEvent.getKeyText(e.getKeyCode()));
+		//		System.out.println(KeyEvent.getKeyText(e.getKeyCode()));
 		switch(e.getKeyCode()) {
 		case KeyEvent.VK_SPACE:  // Toggle simulation pause
 			isPaused = !isPaused;
 			break;
 		case KeyEvent.VK_ESCAPE:  // Restart the simulation
+			isPaused = true;
 			pendulum.reset();
 			th.reset();
 			w.reset();
