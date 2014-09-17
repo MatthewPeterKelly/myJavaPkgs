@@ -107,8 +107,9 @@ public class Integrator {
 				// http://en.wikipedia.org/wiki/Verlet_integration
 				for (int j=0; j<n; j++){
 					p2[j] = p1[j] + dt*v1[j] + 0.5*dt*dt*a1[j]; 
+					v2[j] = v1[j] + dt*a1[j];
 				}
-				a2 = sys.dynamics(p2,v1);
+				a2 = sys.dynamics(p2,v2);
 				for (int j=0; j<n; j++){
 					p1[j] = p2[j];
 					v1[j] = v1[j] + 0.5*dt*(a1[j]+a2[j]);
