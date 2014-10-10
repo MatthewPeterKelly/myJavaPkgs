@@ -167,6 +167,76 @@ public class MyMath {
 			return b1;
 		}
 	}
+
+	/** Evaluates the cubic polynomial of the form:
+	 * y = a*x^3 + b*x^2 + c*x + d	 */
+	public static double cubicEval(double x, 
+			double a, double b, double c, double d){
+		return d + x*(c + x*(b + x*a));
+	}
+
+	/** Solves for the roots of a cubic polynomial on the given interval using 
+	 * Ridder's method. If no root is found then the returns null. If the
+	 * function does not change sign between the bounds of the interval then
+	 * null is returned. Algorithm taken from Numerical Recipes in C. If the
+	 * maximum allowable iterations are reached, it returns the best solution
+	 * and does not issue a warning.
+	 * y = a*x^3 + b*x^2 + c*x + d */
+	public static Double cubicRoot(double xLow, double xUpp,
+			double a, double b, double c, double d){
+
+		/// Initialization
+		double fLow = cubicEval(xLow,a,b,c,d);
+		double fUpp = cubicEval(xUpp,a,b,c,d);
+		double xMid, fMid, xNew, fNew;
+		double s;
+		Double soln = null;
+
+		/// Check that the root is bounded
+		if ( (fLow > 0.0 && fUpp < 0.0) || (fLow < 0.0 && fUpp > 0.0) ){
+			for (int iter=0; iter < maxIter; iter++){
+
+				/// Compute two intermediate points
+				xMid = 0.5*(xLow + xUpp);
+				fMid = cubicEval(xMid,a,b,c,d);
+				s = Math.sqrt(fMid*fMid - fLow*fUpp);
+				if (s==0.0) return soln;
+				xNew=xMid+(xMid-xLow)*((fLow >= fUpp ? 1.0 : -1.0)*fMid/s);
+				if (iter>0) if (Math.abs(xNew-soln) <= rootTol) return soln;
+				soln = xNew;
+				fNew = cubicEval(soln,a,b,c,d);
+				if (fNew == 0.0) return soln;
+
+				/// Update bracketing of root
+				if (Math.signum(fMid) != Math.signum(fNew)){
+					xLow = xMid;
+					fLow = fMid;
+					xUpp = soln;
+					fUpp = fNew;
+				} else if (Math.signum(fLow) != Math.signum(fNew)){
+					xUpp = soln;
+					fUpp = fNew;
+				} else if (Math.signum(fUpp) != Math.signum(fNew)){
+					xLow = soln;
+					fLow = fNew;
+				} else	return null;  // NEVER GET HERE	
+
+				/// Check convergence
+				if (Math.abs(xUpp-xLow) <= rootTol) return soln;
+
+			}
+		} else { /// Root was not bounded, check edge cases
+			if (fLow == 0.0){
+				soln = xLow;
+			} else if (fUpp == 0.0){
+				soln = xUpp;
+			} else {
+				soln = null;
+			}
+		}
+
+		return soln;  // WARNING - only get here if maxIter is exceeded
+	}
 	
 
 
