@@ -17,7 +17,7 @@ public class SurfaceDemo {
 
 	public static void main(String[] args) throws FileNotFoundException {
 			
-			String fullPath = "/home/matt/GitHub/myJavaPkgs/myJavaPkgs/examples/surface.txt";
+			String fullPath = "/home/matt/Git/myJavaPkgs/myJavaPkgs/examples/surface.txt";
 			File file = new File(fullPath);             // create a File object
 			Surface  surface = new Surface(file);
 

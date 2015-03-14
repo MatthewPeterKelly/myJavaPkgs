@@ -192,6 +192,9 @@ public class MyMath {
 		double s;
 		Double soln = null;
 
+		int maxIter = 25;
+		double rootTol = 1e-8;
+		
 		/// Check that the root is bounded
 		if ( (fLow > 0.0 && fUpp < 0.0) || (fLow < 0.0 && fUpp > 0.0) ){
 			for (int iter=0; iter < maxIter; iter++){

@@ -3,7 +3,6 @@ package mpk_dsc;
 import mpk_gui.DrawPanel;
 
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
